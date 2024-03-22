@@ -1,5 +1,34 @@
 #include "gradmet.hpp"
 
+fcpacs::parameters fcpacs::read_param_json(std::string const & filename){
+    parameters defaults;
+
+    std::ifstream check(filename);
+
+    // Check existance of the file
+    if(!check){
+        std::cerr << "ERROR: parameter file " << filename << "does not exists, using default parameters" << std::endl;
+        check.close();
+        return defaults;
+    }
+    else
+        check.close();
+
+    // If file present, we read parameters from it
+    std::ifstream f(filename);
+    nlohmann::json data = nlohmann::json::parse(f);
+    parameters param;
+    
+    param.epsilon_s = data.value("epsilon_s", defaults.epsilon_s);
+    param.epsilon_r = data.value("epsilon_r", defaults.epsilon_r);
+    param.kmax = data.value("kmax", defaults.kmax);
+    param.alpha0 = data.value("alpha0", defaults.alpha0);
+    param.mu = data.value("mu", defaults.mu);
+    param.sigma = data.value("sigma", defaults.sigma);
+    f.close();
+
+    return param;
+}
 
 fcpacs::Real_vec fcpacs::operator-(Real_vec const & a, Real_vec const & b)
 {

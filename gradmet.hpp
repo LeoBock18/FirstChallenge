@@ -5,8 +5,11 @@
 #include<functional>
 #include<vector>
 #include<cmath>
+#include<fstream>
+#include<string>
+#include "json.hpp"
 
-// ADD NAMESPACE!!!
+// Namespace: First Challenge   PACS
 namespace fcpacs{
 
 // Defining aliasis for generalization
@@ -18,22 +21,26 @@ enum method {exp_dec, inv_dec, armijo};
 
 // Parameters defined in a struct
 struct parameters{
-    Real_vec x0{0,0};
-    Real epsilon_s{1e-6};
-    Real epsilon_r{1e-6};
-    unsigned kmax{3000};
-    Real alpha0{0.1};
-    Real mu{0.2};
-    Real sigma{0.025};
+    Real_vec x0 = {0,0};
+    Real epsilon_s = 1e-6;
+    Real epsilon_r = 1e-6;
+    unsigned kmax = 3000;
+    Real alpha0 = 0.1;
+    Real mu = 0.2;
+    Real sigma = 0.025;
 };
 
-// Implementation of vector subtraction
+// Function for reading parameters from a json file
+parameters read_param_json(std::string const & filename);
+
+// Vector operations needed
 Real_vec operator-(Real_vec const &, Real_vec const &);
 
 Real_vec operator*(Real const &, Real_vec const &);
 
 Real norm(Real_vec const &);
 
+// Alpha methods functions
 inline Real set_alpha_exp(Real const & alpha0, Real const & mu, unsigned k)
 {
     return alpha0*exp(-mu*k);
@@ -47,6 +54,7 @@ inline Real set_alpha_inv(Real const & alpha0, Real const & mu, unsigned k)
 Real set_alpha_armijo(std::function< Real (Real_vec) > const &, std::function< Real_vec (Real_vec) > const &,
                 Real const &, Real_vec const &, Real const &);
 
+// Main function for gradient method: M defines the alpha method selected
 template<method M>
 Real_vec gradmet(std::function< Real (Real_vec) > f, std::function< Real_vec (Real_vec) > grad_f, const parameters & param)
 {
@@ -73,16 +81,10 @@ Real_vec gradmet(std::function< Real (Real_vec) > f, std::function< Real_vec (Re
         df = norm(grad_f(xold));
         std::swap(xold,xnew);
         ++k;
-        std::cout << "k = " << k << std::endl;
-        std::cout << "xnew = " << xnew[0] << " " << xnew[1] << std::endl;
-        std::cout << "xold = " << xold[0] << " " << xold[1] << std::endl;
-        std::cout << "err_dx = " << dx << std::endl;
-        std::cout << "err_df = " << df << std::endl;
-        std::cout << std::endl;
     }
     return xold;
 }
 
-}
+} // end namespace
 
 #endif /*GRADIENT_METHOD_HPP*/
