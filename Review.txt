@@ -1,0 +1,8 @@
+The README is simple and clear.
+
+Code:
+  nice usage of std::transform.
+
+Code overall is very clean and intuitive and presents modern features like templates and std::transform.
+
+However muParser was not used nor Extras were implemented.
